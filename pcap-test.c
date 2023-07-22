@@ -74,7 +74,15 @@ int main(int argc, char* argv[]) {
       print_mac(eth_hdr->ether_dhost);
       printf("\n"); 
 
-      struct libnet_tcp_hdr *tcp_hdr = (struct libnet_tcp_hdr *)packet;
+      struct libnet_ipv4_hdr *ip_hdr = (struct libnet_ipv4_hdr *)(packet+14);
+      printf("src ip :");
+      print_ip(ip_hdr->ip_src);
+      printf("\n");
+      printf("dst ip : ");
+      print_ip(ip_hdr->ip_dst);
+      printf("\n");
+
+      struct libnet_tcp_hdr *tcp_hdr = (struct libnet_tcp_hdr *)(packet+14+ip_hdr->ip_hl*4);
       printf("tcp src port : ");
       print_tcp(tcp_hdr->th_sport);
       printf("\n");
@@ -82,13 +90,7 @@ int main(int argc, char* argv[]) {
       print_tcp(tcp_hdr->th_dport);
       printf("\n");
 
-      struct libnet_ipv4_hdr *ip_hdr = (struct libnet_ipv4_hdr *)packet;
-      printf("src ip :");
-      print_ip(ip_hdr->ip_src);
-      printf("\n");
-      printf("dst ip : ");
-      print_ip(ip_hdr->ip_dst);
-      printf("\n");
+     
 
      // int offset = 20;
       u_char* payload =  packet + 14 + tcp_hdr->th_off*4 + ip_hdr->ip_hl*4;
